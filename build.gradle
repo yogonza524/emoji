@@ -1,0 +1,172 @@
+buildscript {
+    repositories {
+        jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath 'com.bmuschko:gradle-nexus-plugin:2.3.1'
+        classpath 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.5.1'
+    }
+}
+
+plugins {
+    id 'java-library'
+    id 'com.github.sherter.google-java-format' version '0.8'
+    id 'io.codearte.nexus-staging' version '0.11.0'
+}
+
+apply plugin: 'com.bmuschko.nexus'
+apply plugin: 'info.solidsoft.pitest'
+apply plugin: 'jacoco'
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+archivesBaseName = 'emojis'
+group = "io.github.yogonza524"
+version = "0.0.1"
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    api 'org.apache.commons:commons-math3:3.6.1'
+    implementation 'com.google.guava:guava:29.0-jre'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
+    compile 'org.pitest:pitest-junit5-plugin:0.12'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+tasks.withType(Test) {
+    testLogging {
+        exceptionFormat "full"
+        events "passed", "failed", "skipped"
+    }
+    useJUnitPlatform()
+}
+
+modifyPom {
+    project {
+        name 'emojis'
+        description 'Convert roman to arabic numbers. You can define your own alphabet too'
+        url 'https://github.com/yogonza524/roman-code'
+        inceptionYear '2020'
+
+        scm {
+            url 'https://github.com/yogonza524/emojis/tree/master/'
+            connection 'sscm:git:git://github.com/yogonza524/emojis.git'
+            developerConnection 'scm:git:ssh://github.com/yogonza524/emojis.git'
+        }
+
+        licenses {
+            license {
+                name 'The Apache Software License, Version 2.0'
+                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                distribution 'repo'
+            }
+        }
+
+        developers {
+            developer {
+                id 'yogonza524'
+                name 'Gonzalo H. Mendoza'
+                email 'yogonza524@gmail.com'
+
+            }
+        }
+    }
+}
+
+extraArchive {
+    sources = true
+    tests = true
+    javadoc = true
+}
+
+nexus {
+    sign = true
+    repositoryUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+    snapshotRepositoryUrl = 'https://oss.sonatype.org/content/repositories/snapshots/'
+}
+
+nexusStaging {
+    packageGroup = "io.github.yogonza524"
+}
+
+pitest {
+    testPlugin = "junit5"
+    targetClasses = ['com.emojis.*']
+    mainSourceSets = [sourceSets.main]
+    testSourceSets = [sourceSets.test]
+    excludedClasses = [
+            'com.meetup.api.presentation.AppBootstrap'
+    ]
+    outputFormats = ['XML', 'HTML']
+    timestampedReports = false
+    failWhenNoMutations = false
+    threads = 12
+    verbose = true
+    coverageThreshold = 90
+    mutationThreshold = 70
+    mutators = ['CONDITIONALS_BOUNDARY',
+                'INCREMENTS',
+                'INVERT_NEGS',
+                'MATH',
+                'NEGATE_CONDITIONALS',
+                'RETURN_VALS',
+                'VOID_METHOD_CALLS',
+                'INLINE_CONSTS',
+                'REMOVE_CONDITIONALS',
+                'EMPTY_RETURNS',
+                'FALSE_RETURNS',
+                'TRUE_RETURNS',
+                'NULL_RETURNS',
+                'PRIMITIVE_RETURNS']
+}
+
+jacoco {
+    toolVersion = "0.8.5"
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.7
+            }
+        }
+    }
+}
+
+task codeCoverageReport(type: JacocoReport) {
+    executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+
+    reports {
+        xml.enabled true
+        xml.destination file("${buildDir}/reports/jacoco/report.xml")
+        html.enabled false
+        csv.enabled false
+    }
+
+    sourceSets sourceSets.main
+}
+
+//jacocoTestCoverageVerification.dependsOn jacocoTestReport
+test {
+    finalizedBy codeCoverageReport
+    finalizedBy jacocoTestReport // report is always generated after tests run
+}
+jacocoTestReport {
+    dependsOn test // tests are required to run before generating the report
+}
