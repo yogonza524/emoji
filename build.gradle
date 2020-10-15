@@ -27,7 +27,7 @@ targetCompatibility = 1.8
 
 archivesBaseName = 'emoji'
 group = "io.github.yogonza524"
-version = "0.0.1"
+version = "0.0.2"
 
 repositories {
     jcenter()
