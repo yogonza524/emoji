@@ -24,6 +24,7 @@ dependencies {
 }
 ```
 ## Examples
+![Yay](./pic.png)
 1. Use an emoji
 ```java
 Emoji bowtie = Emoji.bowtie();
