@@ -42,3 +42,9 @@ List<Emoji> man = Emoji.find("man"); // Return a list of Emijis when name contai
 ```java
 Emoji.all().stream().forEach(System.out::println); // Show all Emojis available
 ```
+
+4. Get the URL as markdown
+```java
+Emoji bowtie = Emoji.bowtie();
+System.out.println(bowtie.markdown()); //![:bowtie:](https://github.githubassets.com/images/icons/emoji/bowtie.png)
+```

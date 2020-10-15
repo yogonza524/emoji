@@ -21,6 +21,7 @@ public class EmojiTest {
         List<Emoji> emojiList = Emoji.find("heart");
         assertNotNull(emojiList);
         assertFalse(emojiList.isEmpty());
+        System.out.println(Emoji.bowtie().markdown());
     }
 
     @Test

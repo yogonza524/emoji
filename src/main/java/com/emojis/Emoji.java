@@ -1267,6 +1267,9 @@ public class Emoji {
     public static Emoji earth_asia(){
         return dictionary.get("earth_asia");
     }
+    public String markdown() {
+        return "![" + this.code + "](" + this.imageUrl + ")";
+    }
 
     public static Emoji bowtie() {
         return dictionary.get("bowtie");
