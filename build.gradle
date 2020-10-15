@@ -25,7 +25,7 @@ apply plugin: 'java'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-archivesBaseName = 'emojis'
+archivesBaseName = 'emoji'
 group = "io.github.yogonza524"
 version = "0.0.1"
 
@@ -56,15 +56,15 @@ tasks.withType(Test) {
 
 modifyPom {
     project {
-        name 'emojis'
-        description 'Convert roman to arabic numbers. You can define your own alphabet too'
-        url 'https://github.com/yogonza524/roman-code'
+        name 'emoji'
+        description 'Emoji SDK'
+        url 'https://github.com/yogonza524/emoji'
         inceptionYear '2020'
 
         scm {
-            url 'https://github.com/yogonza524/emojis/tree/master/'
-            connection 'sscm:git:git://github.com/yogonza524/emojis.git'
-            developerConnection 'scm:git:ssh://github.com/yogonza524/emojis.git'
+            url 'https://github.com/yogonza524/emoji/tree/master/'
+            connection 'sscm:git:git://github.com/yogonza524/emoji.git'
+            developerConnection 'scm:git:ssh://github.com/yogonza524/emoji.git'
         }
 
         licenses {
